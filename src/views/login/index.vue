@@ -173,6 +173,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   .form-head {
     width: 30%;
     padding: 30px 0;
@@ -193,6 +194,9 @@ export default {
       a {
         color: #3296fa;
       }
+    }
+    .el-button {
+      width: 100%;
     }
   }
 }

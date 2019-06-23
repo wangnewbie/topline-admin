@@ -16,6 +16,5 @@ export default {
 <style lang="less" scoped>
 #app {
   height: 100%;
-  text-align: center;
 }
 </style>
