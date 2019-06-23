@@ -7,11 +7,11 @@
           <el-input v-model="userForm.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item prop="code">
-          <el-col :span="14">
+          <el-col :span="15">
             <el-input v-model="userForm.code" placeholder="验证码"></el-input>
           </el-col>
-          <el-col :span="7" :offset="1">
-            <el-button type="primary" @click="handleSendCode" ref="code" :disabled="!!codeTimer">{{ sendCode }}</el-button>
+          <el-col :span="8" :offset="1">
+            <el-button type="primary" @click="handleSendCode" ref="code" :disabled="!!codeTimer">{{ !!codeTimer ? sendCode = `${codeSecond}秒后重新发送` : sendCode = `发送验证码` }}</el-button>
           </el-col>
         </el-form-item>
         <el-form-item prop="checked">
@@ -62,6 +62,8 @@ let code = (rule, value, callback) => {
   }
 }
 
+const initCodeTimeSeconds = 10
+
 export default {
   name: 'AppLogin',
   data () {
@@ -73,6 +75,7 @@ export default {
       },
       sendCode: '发送验证码',
       codeTimer: false,
+      codeSecond: initCodeTimeSeconds,
       rules: {
         mobile: [
           // { required: true, message: "请输入手机号", trigger: "blur" }
@@ -137,6 +140,7 @@ export default {
             mobile: this.userForm.mobile,
             code: this.userForm.code
           }).then((res) => {
+            window.localStorage.setItem('user_info', JSON.stringify(res.data.data))
             this.$router.push({
               name: 'home'
             })
@@ -149,13 +153,12 @@ export default {
       })
     },
     codeCountDown () {
-      let codeSecond = 5
       this.codeTimer = window.setInterval(() => {
-        if (codeSecond >= 0) {
-          this.sendCode = `${codeSecond}秒后重新发送`
-          codeSecond--
+        if (this.codeSecond >= 1) {
+          // this.sendCode = `${codeSecond}秒后重新发送`
+          this.codeSecond--
         } else {
-          this.sendCode = '发送验证码'
+          this.codeSecond = initCodeTimeSeconds
           window.clearInterval(this.codeTimer)
           this.codeTimer = false
         }
