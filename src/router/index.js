@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -13,9 +13,39 @@ export default new Router({
           name: 'home',
           path: '',
           component: () => import('@/views/home')
+        },
+        {
+          name: 'publish',
+          path: '/publish',
+          component: () => import('@/views/publish')
         }
       ]
     },
     { name: 'login', path: '/login', component: () => import('@/views/login') }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') {
+    // 访问登录页面
+    if (window.localStorage.getItem('user_info')) {
+      // 已经登录时
+      next({ path: '/' })
+      window.location.reload()
+    } else {
+      // 未登录时
+      next()
+    }
+  } else {
+    // 访问非登录页面
+    if (window.localStorage.getItem('user_info')) {
+      // 已经登录时
+      next()
+    } else {
+      // 未登录时
+      next({ name: 'login' })
+    }
+  }
+})
+
+export default router

@@ -62,7 +62,7 @@ let code = (rule, value, callback) => {
   }
 }
 
-const initCodeTimeSeconds = 10
+const initCodeTimeSeconds = 60
 
 export default {
   name: 'AppLogin',
