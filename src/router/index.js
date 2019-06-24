@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import NProgress from 'nprogress'
 
 Vue.use(Router)
 
@@ -26,6 +27,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  NProgress.start()
   if (to.path === '/login') {
     // 访问登录页面
     if (window.localStorage.getItem('user_info')) {
@@ -46,6 +48,9 @@ router.beforeEach((to, from, next) => {
       next({ name: 'login' })
     }
   }
+})
+router.afterEach((to, from) => {
+  NProgress.done()
 })
 
 export default router

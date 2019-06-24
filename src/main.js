@@ -4,6 +4,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App.vue'
 import router from './router'
 import './styles/index.less'
+import '../node_modules/nprogress/nprogress.css'
 
 Vue.config.productionTip = false
 
