@@ -6,12 +6,41 @@ import router from './router'
 import './styles/index.less'
 import '../node_modules/nprogress/nprogress.css'
 import axios from 'axios'
+import { getUser, removeUser } from '@/utils/auth'
 
 Vue.config.productionTip = false
 
 axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0'
+// axios.defaults.baseURL = 'https://mock.boxuegu.com/mock/434/v1_0'
 
 Vue.use(ElementUI)
+
+Vue.prototype.$http = axios
+// 请求拦截器
+axios.interceptors.request.use(function (config) {
+  const user = getUser()
+  if (user) {
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+// 响应拦截器
+axios.interceptors.response.use(function (response) {
+  if (typeof response.data === 'object' && response.data.data) {
+    return response.data.data
+  } else {
+    return response.data
+  }
+}, function (error) {
+  console.log(error)
+  if (error.response.status === 401) {
+    removeUser()
+    router.push({ name: 'login' })
+  }
+  return Promise.reject(error)
+})
 
 new Vue({
   router,

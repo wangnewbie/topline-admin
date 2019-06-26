@@ -11,7 +11,7 @@
             <el-input v-model="userForm.code" placeholder="验证码"></el-input>
           </el-col>
           <el-col :span="8" :offset="1">
-            <el-button type="primary" @click="handleSendCode" ref="code" :disabled="!!codeTimer">{{ !!codeTimer ? sendCode = `${codeSecond}秒后重新发送` : sendCode = `发送验证码` }}</el-button>
+            <el-button :loading="codeLoading" type="primary" @click="handleSendCode" ref="code" :disabled="!!codeTimer">{{ !!codeTimer ? sendCode = `${codeSecond}秒后重新发送` : sendCode = `发送验证码` }}</el-button>
           </el-col>
         </el-form-item>
         <el-form-item prop="checked">
@@ -22,7 +22,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleLogin">登录</el-button>
+          <el-button type="primary" @click="handleLogin" :loading="loginLoading">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import '@/vendor/gt'
 import { setUser } from '@/utils/auth'
 import initGeetest from '@/utils/init-geetest'
@@ -89,7 +88,9 @@ export default {
         checked: [
           { validator: checked, trigger: 'change' }
         ]
-      }
+      },
+      loginLoading: false,
+      codeLoading: false
     }
   },
   methods: {
@@ -98,9 +99,9 @@ export default {
         if (errorMessage.trim().length > 0) {
           return
         }
+        this.codeLoading = true
         const { mobile } = this.userForm
-        const res = await axios.get(`/captchas/${mobile}`)
-        const { data } = res.data
+        const data = await this.$http.get(`/captchas/${mobile}`)
         const captchaObj = await initGeetest({
           gt: data.gt,
           challenge: data.challenge,
@@ -116,7 +117,7 @@ export default {
             geetest_challenge: challenge,
             geetest_seccode: seccode,
             geetest_validate: validate } = captchaObj.getValidate()
-          await axios({
+          await this.$http({
             method: 'get',
             url: `/sms/codes/${mobile}`,
             params: {
@@ -127,17 +128,19 @@ export default {
           })
           this.codeCountDown()
         })
+        this.codeLoading = false
       })
     },
     handleLogin () {
       this.$refs['form'].validate(async valid => {
+        this.loginLoading = true
         if (valid) {
           try {
-            const res = await axios.post('/authorizations', {
+            const res = await this.$http.post('/authorizations', {
               mobile: this.userForm.mobile,
               code: this.userForm.code
             })
-            setUser(res.data.data)
+            setUser(res)
             this.$router.push({
               name: 'home'
             })
@@ -147,6 +150,7 @@ export default {
         } else {
           return false
         }
+        this.loginLoading = false
       })
     },
     codeCountDown () {
