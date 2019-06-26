@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { getUser, removeUser } from '@/utils/auth'
+
 export default {
   name: 'AddHeader',
   data () {
@@ -29,7 +31,8 @@ export default {
     }
   },
   created () {
-    this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
+    // this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
+    this.userInfo = getUser()
   },
   methods: {
     handleExitUser () {
@@ -38,7 +41,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        window.localStorage.removeItem('user_info')
+        // window.localStorage.removeItem('user_info')
+        removeUser()
         this.$router.push({ name: 'login' })
         this.$message({
           type: 'success',

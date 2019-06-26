@@ -46,6 +46,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // 未登录时
       next({ name: 'login' })
+      window.location.reload()
     }
   }
 })

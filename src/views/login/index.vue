@@ -32,6 +32,8 @@
 <script>
 import axios from 'axios'
 import '@/vendor/gt'
+import { setUser } from '@/utils/auth'
+import initGeetest from '@/utils/init-geetest'
 
 // 验证复选框是否选中
 let checked = (rule, value, callback) => {
@@ -92,61 +94,56 @@ export default {
   },
   methods: {
     handleSendCode () {
-      this.$refs['form'].validateField('mobile', errorMessage => {
+      this.$refs['form'].validateField('mobile', async errorMessage => {
         if (errorMessage.trim().length > 0) {
           return
         }
         const { mobile } = this.userForm
-        axios.get(`http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`).then((res) => {
-          const { data } = res.data
-          window.initGeetest({
-            gt: data.gt,
-            challenge: data.challenge,
-            offline: !data.success,
-            new_captcha: data.new_captcha,
-            product: 'bind' // 隐藏，直接弹出式
-          }, (captchaObj) => {
-            captchaObj.onReady(() => {
-              // 验证码ready之后才能调用verify方法显示验证码
-              captchaObj.verify() // 弹出验证码内容框
-            }).onSuccess(() => {
-              // your code
-              const {
-                geetest_challenge: challenge,
-                geetest_seccode: seccode,
-                geetest_validate: validate } = captchaObj.getValidate()
-              axios({
-                method: 'get',
-                url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
-                params: {
-                  challenge,
-                  validate,
-                  seccode
-                }
-              }).then((res) => {
-                this.codeCountDown()
-              })
-            }).onError(function () {
-              // your code
-            })
+        const res = await axios.get(`/captchas/${mobile}`)
+        const { data } = res.data
+        const captchaObj = await initGeetest({
+          gt: data.gt,
+          challenge: data.challenge,
+          offline: !data.success,
+          new_captcha: data.new_captcha,
+          product: 'bind' // 隐藏，直接弹出式
+        })
+        captchaObj.onReady(() => {
+          // 验证码ready之后才能调用verify方法显示验证码
+          captchaObj.verify() // 弹出验证码内容框
+        }).onSuccess(async () => {
+          const {
+            geetest_challenge: challenge,
+            geetest_seccode: seccode,
+            geetest_validate: validate } = captchaObj.getValidate()
+          await axios({
+            method: 'get',
+            url: `/sms/codes/${mobile}`,
+            params: {
+              challenge,
+              validate,
+              seccode
+            }
           })
+          this.codeCountDown()
         })
       })
     },
     handleLogin () {
-      this.$refs['form'].validate(valid => {
+      this.$refs['form'].validate(async valid => {
         if (valid) {
-          axios.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', {
-            mobile: this.userForm.mobile,
-            code: this.userForm.code
-          }).then((res) => {
-            window.localStorage.setItem('user_info', JSON.stringify(res.data.data))
+          try {
+            const res = await axios.post('/authorizations', {
+              mobile: this.userForm.mobile,
+              code: this.userForm.code
+            })
+            setUser(res.data.data)
             this.$router.push({
               name: 'home'
             })
-          }).catch((e) => {
+          } catch (error) {
             this.$message.error('登录失败，手机号或验证码错误')
-          })
+          }
         } else {
           return false
         }
