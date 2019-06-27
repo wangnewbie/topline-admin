@@ -11,7 +11,7 @@
             <el-input v-model="userForm.code" placeholder="验证码"></el-input>
           </el-col>
           <el-col :span="8" :offset="1">
-            <el-button :loading="codeLoading" type="primary" @click="handleSendCode" ref="code" :disabled="!!codeTimer">{{ !!codeTimer ? sendCode = `${codeSecond}秒后重新发送` : sendCode = `发送验证码` }}</el-button>
+            <el-button :loading="codeLoading" @click="handleSendCode" ref="code" :disabled="!!codeTimer" plain>{{ !!codeTimer ? sendCode = `${codeSecond}秒后发送` : sendCode = `发送验证码` }}</el-button>
           </el-col>
         </el-form-item>
         <el-form-item prop="checked">

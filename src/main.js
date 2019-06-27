@@ -10,8 +10,8 @@ import { getUser, removeUser } from '@/utils/auth'
 
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0'
-// axios.defaults.baseURL = 'https://mock.boxuegu.com/mock/434/v1_0'
+// axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0'
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 
 Vue.use(ElementUI)
 
@@ -21,6 +21,7 @@ axios.interceptors.request.use(function (config) {
   const user = getUser()
   if (user) {
     config.headers.Authorization = `Bearer ${user.token}`
+    // config.headers.Authorization = `Bearer 123`
   }
   return config
 }, function (error) {
@@ -34,7 +35,6 @@ axios.interceptors.response.use(function (response) {
     return response.data
   }
 }, function (error) {
-  console.log(error)
   if (error.response.status === 401) {
     removeUser()
     router.push({ name: 'login' })

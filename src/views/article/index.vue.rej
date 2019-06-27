@@ -1,0 +1,10 @@
+diff a/src/views/article/index.vue b/src/views/article/index.vue	(rejected hunks)
+@@ -71 +71 @@ export default {
+-        { type: 'danger', label: '已删除' },
++        { type: 'danger', label: '已删除' }
+@@ -81 +81 @@ export default {
+-    this.loadArticles();
++    this.loadArticles()
+@@ -100 +100 @@ export default {
+-    handleCurrentChange(val) {
++    handleCurrentChange (val) {

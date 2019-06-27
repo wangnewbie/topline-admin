@@ -37,8 +37,10 @@ router.beforeEach((to, from, next) => {
     // 访问登录页面
     if (window.localStorage.getItem('user_info')) {
       // 已经登录时
+      if (from.path === to.path) {
+        NProgress.done()
+      }
       next({ path: '/' })
-      window.location.reload()
     } else {
       // 未登录时
       next()
@@ -50,8 +52,10 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       // 未登录时
+      if (from.path === '/login') {
+        NProgress.done()
+      }
       next({ name: 'login' })
-      window.location.reload()
     }
   }
 })
