@@ -7,11 +7,19 @@ import './styles/index.less'
 import '../node_modules/nprogress/nprogress.css'
 import axios from 'axios'
 import { getUser, removeUser } from '@/utils/auth'
+import JSONbig from 'json-bigint'
 
 Vue.config.productionTip = false
 
 // axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
+axios.defaults.transformResponse = [(data) => {
+  try {
+    return JSONbig.parse(data)
+  } catch (error) {
+    return data
+  }
+}]
 
 Vue.use(ElementUI)
 

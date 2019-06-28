@@ -68,9 +68,9 @@
         </el-table-column>
         <el-table-column
           label="操作">
-          <template>
+          <template slot-scope="scope">
             <el-button size="mini" type="primary" plain>编辑</el-button>
-            <el-button size="mini" type="danger" plain>删除</el-button>
+            <el-button size="mini" type="danger" plain @click="articleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -163,6 +163,34 @@ export default {
     filtrateDate (value) {
       this.articleForm.begin_pubdate = value[0]
       this.articleForm.end_pubdate = value[1]
+    },
+    async articleDelete (item) {
+      try {
+        await this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        await this.$http({
+          method: 'DELETE',
+          url: `/articles/${item.id}`
+        })
+        this.loadArticles()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      } catch (error) {
+        console.log(error)
+        if (error === 'cancel') {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        } else {
+          this.$message.error('删除失败')
+        }
+      }
     }
   }
 }
