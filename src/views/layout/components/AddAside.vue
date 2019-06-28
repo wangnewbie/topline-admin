@@ -4,7 +4,7 @@
       <img src="./logo_admin.png" width="120">
     </div>
     <el-menu
-      default-active="/"
+      :default-active="currentMenu"
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
@@ -44,11 +44,19 @@
 export default {
   name: 'AddHeader',
   data () {
-    return {}
+    return {
+      currentMenu: '/'
+    }
+  },
+  created () {
+    this.getUrl()
   },
   methods: {
     handleOpen (key, keyPath) {},
-    handleClose (key, keyPath) {}
+    handleClose (key, keyPath) {},
+    getUrl () {
+      this.currentMenu = this.$route.path
+    }
   }
 }
 </script>
