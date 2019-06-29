@@ -24,8 +24,8 @@
           <article-channel v-model="publishForm.channel_id"></article-channel>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">发布</el-button>
-          <el-button>存入草稿</el-button>
+          <el-button :loading="isLoading" type="primary" @click="handlePublish(false)">发布</el-button>
+          <el-button @click="handlePublish(true)">存入草稿</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -45,16 +45,32 @@ export default {
         title: '',
         content: '',
         cover: {
-          type: '',
-          images: ''
+          type: 0,
+          images: []
         },
         channel_id: ''
-      }
+      },
+      isLoading: false
     }
   },
   methods: {
-    onSubmit () {
-      console.log('submit!')
+    async handlePublish (draft) {
+      this.isLoading = true
+      try {
+        await this.$http({
+          method: 'POST',
+          url: '/articles',
+          params: {
+            draft
+          },
+          data: this.publishForm
+        })
+        this.$message(`${draft ? '存入草稿' : '发布文章'}成功`)
+        this.$router.push({ name: 'article' })
+      } catch (error) {
+        this.$message.error(`${draft ? '存入草稿' : '发布文章'}失败`)
+      }
+      this.isLoading = false
     }
   }
 }
