@@ -9,7 +9,10 @@
           <el-input v-model="publishForm.title"></el-input>
         </el-form-item>
         <el-form-item label="内容">
-          <el-input type="textarea" v-model="publishForm.content"></el-input>
+          <!-- <el-input type="textarea" v-model="publishForm.content"></el-input> -->
+          <quill-editor v-model="publishForm.content"
+            ref="myQuillEditor"
+            :options="editorOption"></quill-editor>
         </el-form-item>
         <el-form-item label="封面">
           <el-radio-group v-model="publishForm.cover">
@@ -34,10 +37,15 @@
 
 <script>
 import ArticleChannel from '@/components/article-channel'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'Addpublish',
   components: {
-    ArticleChannel
+    ArticleChannel,
+    quillEditor
   },
   data () {
     return {
@@ -50,7 +58,8 @@ export default {
         },
         channel_id: ''
       },
-      isLoading: false
+      isLoading: false,
+      editorOption: {} // 富文本编辑器配置选项
     }
   },
   methods: {
@@ -76,5 +85,14 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
+.el-input {
+  width: 400px;
+}
+.ql-container {
+  height: 400px;
+}
+.el-input--suffix {
+  width: 200px;
+}
 </style>

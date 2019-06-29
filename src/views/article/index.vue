@@ -147,11 +147,11 @@ export default {
         })
         this.articles = res.results
         this.totalCount = res.total_count
-        this.loading = false
         this.articleLoading = false
       } catch (error) {
         this.$message.error('获取文件列表失败')
       }
+      this.loading = false
     },
     handleCurrentChange (val) {
       this.page = val
