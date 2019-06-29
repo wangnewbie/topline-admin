@@ -62,24 +62,55 @@ export default {
       editorOption: {} // 富文本编辑器配置选项
     }
   },
+  created () {
+    if (this.$route.name === 'publish-edit') {
+      this.loadPublish()
+    }
+  },
   methods: {
     async handlePublish (draft) {
       this.isLoading = true
       try {
-        await this.$http({
-          method: 'POST',
-          url: '/articles',
-          params: {
-            draft
-          },
-          data: this.publishForm
-        })
-        this.$message(`${draft ? '存入草稿' : '发布文章'}成功`)
-        this.$router.push({ name: 'article' })
+        if (this.$route.name === 'publish-edit') {
+          await this.$http({
+            method: 'PUT',
+            url: `/articles/${this.$route.params.id}`,
+            params: {
+              draft
+            },
+            data: this.publishForm
+          })
+          this.$message(`${draft ? '修改并存入草稿' : '修改文章'}成功`)
+          this.$router.push({ name: 'article' })
+        } else {
+          await this.$http({
+            method: 'POST',
+            url: '/articles',
+            params: {
+              draft
+            },
+            data: this.publishForm
+          })
+          this.$message(`${draft ? '存入草稿' : '发布文章'}成功`)
+          this.$router.push({ name: 'article' })
+        }
       } catch (error) {
-        this.$message.error(`${draft ? '存入草稿' : '发布文章'}失败`)
+        if (this.$route.name === 'publish-edit') {
+          this.$message.error(`${draft ? '修改并存入草稿' : '修改文章'}失败`)
+        } else {
+          this.$message.error(`${draft ? '存入草稿' : '发布文章'}失败`)
+        }
       }
       this.isLoading = false
+    },
+    async loadPublish () {
+      try {
+        const data = await this.$http.get(`/articles/${this.$route.params.id}`)
+        this.publishForm = data
+      } catch (error) {
+        this.$message.error('获取文章失败')
+      }
+      // console.log(this.$route.params.id)
     }
   }
 }
