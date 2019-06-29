@@ -12,10 +12,11 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表">
-          <el-select v-model="articleForm.channel_id" placeholder="请选择频道">
+          <article-channel v-model="articleForm.channel_id"></article-channel>
+          <!-- <el-select v-model="articleForm.channel_id" placeholder="请选择频道">
             <el-option label="全部" value=""></el-option>
             <el-option v-for="item in classifyArticle" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="时间选择">
           <div class="block">
@@ -89,8 +90,12 @@
 </template>
 
 <script>
+import ArticleChannel from '@/components/article-channel'
 export default {
   name: 'AppArticle',
+  components: {
+    ArticleChannel
+  },
   data () {
     return {
       articles: [], // 文章数据
@@ -112,13 +117,13 @@ export default {
         begin_pubdate: '', // 开始时间
         end_pubdate: '' // 结束时间
       },
-      timeDifference: '', // 开始时间到结束时间的数组
-      classifyArticle: [] // 获取文章频道
+      timeDifference: '' // 开始时间到结束时间的数组
+      // classifyArticle: [] // 获取文章频道
     }
   },
   created () {
     this.loadArticles()
-    this.loadClassifyArticle()
+    // this.loadClassifyArticle()
   },
   methods: {
     async loadArticles () {
@@ -156,10 +161,10 @@ export default {
       this.page = 1
       this.loadArticles()
     },
-    async loadClassifyArticle () {
-      const res = await this.$http.get('/channels')
-      this.classifyArticle = res.channels
-    },
+    // async loadClassifyArticle () {
+    //   const res = await this.$http.get('/channels')
+    //   this.classifyArticle = res.channels
+    // },
     filtrateDate (value) {
       this.articleForm.begin_pubdate = value[0]
       this.articleForm.end_pubdate = value[1]
