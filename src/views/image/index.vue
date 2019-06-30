@@ -18,12 +18,17 @@
             <div style="padding: 14px;">
               <div class="bottom clearfix">
                 <el-button
-                size="small"
-                plain
-                :icon="item.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'"
-                circle
-                @click="headelCollect(item)"></el-button>
-                <el-button size="small" plain icon="el-icon-delete-solid" circle></el-button>
+                  size="small"
+                  plain
+                  :icon="item.is_collected ? 'el-icon-star-on' : 'el-icon-star-off'"
+                  circle
+                  @click="headelCollect(item)"></el-button>
+                <el-button
+                  size="small"
+                  plain
+                  icon="el-icon-delete-solid"
+                  circle
+                  @click="headelDelete(item)"></el-button>
               </div>
             </div>
           </el-card>
@@ -69,6 +74,30 @@ export default {
         this.loadImage()
       } catch (error) {
         this.$message.error(`${item.is_collected ? '取消' : ''}收藏素材失败`)
+      }
+    },
+    async headelDelete (item) {
+      try {
+        await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        await this.$http.delete(`/user/images/${item.id}`)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        this.loadImage()
+      } catch (error) {
+        if (error === 'cancel') {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        } else {
+          this.$message.error('删除素材失败')
+        }
       }
     }
   }
