@@ -8,7 +8,8 @@
         <el-radio-button label="全部" @click.native="loadImage(false)"></el-radio-button>
         <el-radio-button label="收藏" @click.native="loadImage(true)"></el-radio-button>
       </el-radio-group>
-      <el-button type="primary">上传图片</el-button>
+      <!-- <el-button type="primary">上传图片</el-button> -->
+      <upload-image @loadImage="uploadImage"></upload-image>
       <el-row :gutter="20">
         <el-col :span="4" v-for="item in material" :key="item.id">
           <el-card :body-style="{ padding: '0px' }">
@@ -39,8 +40,12 @@
 </template>
 
 <script>
+import UploadImage from '@/components/upload-image'
 export default {
   name: 'AppImage',
+  components: {
+    UploadImage
+  },
   data () {
     return {
       material: {},
@@ -99,6 +104,9 @@ export default {
           this.$message.error('删除素材失败')
         }
       }
+    },
+    uploadImage (data) {
+      this.loadImage()
     }
   }
 }
@@ -108,7 +116,7 @@ export default {
 .el-radio-group {
   margin-bottom: 30px;
 }
-.el-button--primary {
+.upload-image-warp {
   float: right;
 }
 
