@@ -7,8 +7,8 @@
       <el-col :span="4" :offset="14">
         <el-dropdown trigger="click">
           <span class="el-dropdown-link">
-            <img :src="userInfo.photo" class="user-avatar">
-            {{ userInfo.name }}<i class="iconfont iconsanjiao"></i>
+            <img :src="$store.state.user.photo" class="user-avatar">
+            {{ this.$store.state.user.name }}<i class="iconfont iconsanjiao"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>个人信息</el-dropdown-item>

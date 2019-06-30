@@ -8,6 +8,7 @@ import '../node_modules/nprogress/nprogress.css'
 import axios from 'axios'
 import { getUser, removeUser } from '@/utils/auth'
 import JSONbig from 'json-bigint'
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -52,5 +53,6 @@ axios.interceptors.response.use(function (response) {
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
